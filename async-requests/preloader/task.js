@@ -1,4 +1,5 @@
 let xhr = new XMLHttpRequest();
+xhr.responseType = 'json';
 let items = document.querySelector('#items');
 let loader = document.querySelector('#loader');
 let arr = [];
@@ -8,9 +9,9 @@ if (fromLocalStorage === null) {
     xhr.open('GET', 'https://students.netoservices.ru/nestjs-backend/slow-get-courses');
     xhr.send();
     
-    xhr.addEventListener('readystatechange', () => {
-        if (xhr.readyState === xhr.DONE && xhr.status === 200) {
-            let answer = JSON.parse(xhr.responseText);
+    xhr.addEventListener('load', () => {
+        if (xhr.status === 200) {
+            let answer = xhr.response;
             
             renderAnswer(answer);
             localStorage.setItem('preloader', xhr.responseText);
@@ -26,9 +27,9 @@ if (fromLocalStorage === null) {
     xhr.open('GET', 'https://students.netoservices.ru/nestjs-backend/slow-get-courses');
     xhr.send();
 
-    xhr.addEventListener('readystatechange', () => {
-        if (xhr.readyState === xhr.DONE && xhr.status === 200) {
-            answer = JSON.parse(xhr.responseText);
+    xhr.addEventListener('load', () => {
+        if (xhr.status === 200) {
+            answer = xhr.responseText;
 
             renderAnswer(answer);
             localStorage.setItem('preloader', xhr.responseText);

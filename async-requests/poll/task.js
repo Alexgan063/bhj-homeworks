@@ -6,16 +6,17 @@ let title;
 let answers;
 
 let xhr = new XMLHttpRequest();
+xhr.responseType = 'json';
 
 
 
 function showAndUpdateAns(event) {
     xhr.open('GET', 'https://students.netoservices.ru/nestjs-backend/poll');
     xhr.send();
-    xhr.addEventListener('readystatechange', () => {
-    if (xhr.readyState === xhr.DONE && xhr.status === 200) {
+    xhr.addEventListener('load', () => {
+    if (xhr.status === 200) {
         [...pollAnswersList.children].map((i) => i.remove());
-        let answer = JSON.parse(xhr.responseText);
+        let answer = xhr.response;
         id = answer.id;
         title = answer.data.title;
         answers = answer.data.answers;
