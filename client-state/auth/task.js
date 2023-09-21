@@ -1,43 +1,36 @@
-const form = document.getElementById("signin__form");
-const inputFields = Array.from(document.querySelectorAll(".control"));
-const userId = document.getElementById("user_id");
-const signin = document.querySelector(".signin");
-const welcome = document.querySelector(".welcome");
-const button = document.querySelector(".btn");
-let savedId;
+const signinForm = document.getElementById('signin__form');
+const signinDiv = document.getElementById('signin');
+const welcomeBlock = document.getElementById('welcome');
+const welcomeUserId = document.getElementById('user_id');
+const userId = localStorage.getItem('user_id');
+if (userId) {
+    welcomeUserId.textContent = userId;
+    welcomeBlock.classList.add('welcome_active');
+    signinDiv.classList.remove('signin_active');
+}
 
-form.addEventListener("submit", (event) => {
-  fetch("https://students.netoservices.ru/nestjs-backend/auth", {
-    method: "POST",
-    body: new FormData(form),
-  })
-    .then((response) => {
-      if (response.ok) {
-        return response.json();
-      } else {
-        throw new Error("Неверный логин/пароль");
-      }
-    })
-    .then((data) => {
-      form.reset();
-      localStorage.setItem("id", data.user_id);
-      savedId = localStorage.getItem("id");
-      userId.textContent = savedId;
-      signin.classList.remove("signin_active");
-      welcome.classList.add("welcome_active");
-    })
-    .catch((error) => {
-      alert(error);
-    });
+signinForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-  event.preventDefault();
-});
+    const formData = new FormData(signinForm);
 
-window.addEventListener("load", () => {
-  savedId = localStorage.getItem("id");
-  if (savedId) {
-    userId.textContent = savedId;
-    signin.classList.remove("signin_active");
-    welcome.classList.add("welcome_active");
-  }
+    try {
+        const response = await fetch('https://students.netoservices.ru/nestjs-backend/auth', {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            localStorage.setItem('user_id', data.user_id);
+            welcomeUserId.textContent = data.user_id;
+            welcomeBlock.classList.add('welcome_active');
+            signinDiv.classList.remove('signin_active');
+        } else {
+            alert('you shall not pass');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
 });
